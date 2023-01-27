@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/andrepmagalhaes/q2bank_test/handlers"
 
@@ -13,8 +14,14 @@ import (
 
 func main() {
 
-	dbConnStr := "postgresql://postgres:123456@localhost:5432/postgres?sslmode=disable"
+	file, err := os.OpenFile("logs.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	if err != nil {
+			log.Fatal(err)
+	}
+	defer file.Close()
+	log.SetOutput(file)
 
+	dbConnStr := "postgresql://postgres:123456@localhost:5432/q2bank?sslmode=disable"
 	db, err := sql.Open("postgres", dbConnStr)
 
 	if err != nil {
@@ -36,8 +43,9 @@ func main() {
 		return handlers.Login(c, db)
 	})
 
-
-
+	app.Get("/balance", func(c *fiber.Ctx) error {
+		return handlers.Balance(c, db)
+	})
 	app.Listen(":3000")
 
 }

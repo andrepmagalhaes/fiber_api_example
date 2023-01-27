@@ -11,5 +11,4 @@ docker exec -it q2bank_postgres psql -U postgres -c "CREATE DATABASE q2bank
     CONNECTION LIMIT = -1
     IS_TEMPLATE = False;"
 
-docker exec -it q2bank_postgres psql -U postgres -c "\c q2bank"
-docker exec -it q2bank_postgres psql -U postgres -c "$tables"
+docker exec -it q2bank_postgres psql -U postgres -d q2bank -c "$tables"
