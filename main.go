@@ -46,6 +46,11 @@ func main() {
 	app.Get("/balance", func(c *fiber.Ctx) error {
 		return handlers.Balance(c, db)
 	})
+
+	app.Post("/transaction", func(c *fiber.Ctx) error {
+		return handlers.Transaction(c, db)
+	})
+
 	app.Listen(":3000")
 
 }

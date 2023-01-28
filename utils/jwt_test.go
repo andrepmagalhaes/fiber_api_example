@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/gofiber/fiber/v2"
@@ -11,7 +10,7 @@ import (
 func TestJWT(t *testing.T) {
 	token, err := CreateJWT(1, "person")
 	if err != nil {
-		t.Error(fmt.Sprintf("Error creating JWT: %s", err.Error()))
+		t.Errorf("Error creating JWT: %s", err.Error())
 	}
 	app := fiber.New()
 	c := app.AcquireCtx(&fasthttp.RequestCtx{})
@@ -20,12 +19,12 @@ func TestJWT(t *testing.T) {
 
 	id, userType, err := VerifyJWT(c)
 	if err != nil {
-		t.Error(fmt.Sprintf("Error verifying JWT: %s", err.Error()))
+		t.Errorf("Error verifying JWT: %s", err.Error())
 	}
 	if id == -1 {
-		t.Error(fmt.Sprintf("JWT is not valid"))
+		t.Errorf("JWT is not valid")
 	}
 	if userType != "person" {
-		t.Error(fmt.Sprintf("JWT is not valid"))
+		t.Errorf("JWT is not valid")
 	}
 }

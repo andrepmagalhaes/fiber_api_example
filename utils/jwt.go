@@ -30,7 +30,7 @@ func CreateJWT(id int, userType string) (string, error) {
 	tokenString, err := token.SignedString([]byte("secret"))
 	
 	if err != nil {
-		log.Println(fmt.Sprintf("Error creating JWT: %s", err.Error()))
+		log.Printf("Error creating JWT: %s", err.Error())
 		return "", err
 	}
 
@@ -48,15 +48,15 @@ func VerifyJWT(c *fiber.Ctx) (int, string, error) {
 	})
 	if err != nil {
 		if err == jwt.ErrSignatureInvalid {
-			log.Println(fmt.Sprintf("Error verifying JWT: %s", err.Error()))
-			return -1, "", fmt.Errorf("Invalid Token Signature")
+			log.Printf("Error verifying JWT: %s", err.Error())
+			return -1, "", fmt.Errorf("invalid token signature")
 		}
-		log.Println(fmt.Sprintf("Error verifying JWT: %s", err.Error()))
-		return -1, "", fmt.Errorf("Invalid Token")
+		log.Printf("Error verifying JWT: %s", err.Error())
+		return -1, "", fmt.Errorf("invalid token")
 	}
 	if !tkn.Valid {
-		log.Println(fmt.Sprintf("Error verifying JWT: %s", err.Error()))
-		return -1, "", fmt.Errorf("Invalid Token")
+		log.Printf("Error verifying JWT: %s", err.Error())
+		return -1, "", fmt.Errorf("invalid token")
 	}
 	return claims.Id, claims.UserType, nil
 }

@@ -35,12 +35,12 @@ func validateUserQuery(email string, cpfCnpj string, db *sql.DB) error {
 	rows, err := db.Query("SELECT ID FROM public.\"Users\" WHERE email = $1 OR cpf_cnpj = $2", email, cpfCnpj)
 
 	if err != nil {
-		log.Println(fmt.Sprintf("Error checking if user exists: %s", err.Error()))
-		return fmt.Errorf("Internal Server Error")
+		log.Printf("Error checking if user exists: %s", err.Error())
+		return fmt.Errorf("internal server error")
 	}
 
 	if rows.Next() {
-		return fmt.Errorf("User with this email or cpf_cnpj already exists")
+		return fmt.Errorf("user with this email or cpf_cnpj already exists")
 	}
 
 	return nil
@@ -49,14 +49,14 @@ func validateUserQuery(email string, cpfCnpj string, db *sql.DB) error {
 func insertUserQuery(body CreateBody, db *sql.DB) error {
 
 	if body.UserType == "bank" {
-		return fmt.Errorf("User type bank is not allowed")
+		return fmt.Errorf("user type bank is not allowed")
 	}
 
 	_, err := db.Exec("INSERT INTO public.\"Users\" (email, password, cpf_cnpj, name, user_type) VALUES ($1, $2, $3, $4, $5)", body.Email, body.Password, body.CpfCnpj, body.Name, body.UserType)
 
 	if err != nil {
-		log.Println(fmt.Sprintf("Error inserting user: %s", err.Error()))
-		return fmt.Errorf("Internal Server Error")
+		log.Printf("Error inserting user: %s", err.Error())
+		return fmt.Errorf("internal server error")
 	}
 
 	return nil
@@ -66,12 +66,12 @@ func findUserQuery(email string, db *sql.DB) (int, string, string, error) {
 	rows, err := db.Query("SELECT id, password, user_type FROM public.\"Users\" WHERE email = $1", email)
 
 	if err != nil {
-		log.Println(fmt.Sprintf("Error checking if user exists: %s", err.Error()))
-		return -1, "", "", fmt.Errorf("Internal Server Error")
+		log.Printf("Error checking if user exists: %s", err.Error())
+		return -1, "", "", fmt.Errorf("internal server error")
 	}
 
 	if !rows.Next() {
-		return -1, "", "", fmt.Errorf("User not found")
+		return -1, "", "", fmt.Errorf("user not found")
 	}
 
 	var id int
@@ -81,8 +81,8 @@ func findUserQuery(email string, db *sql.DB) (int, string, string, error) {
 	err = rows.Scan(&id, &password, &userType)
 
 	if err != nil {
-		log.Println(fmt.Sprintf("Error scanning user: %s", err.Error()))
-		return -1, "", "", fmt.Errorf("Internal Server Error")
+		log.Printf("Error scanning user: %s", err.Error())
+		return -1, "", "", fmt.Errorf("internal server error")
 	}
 
 	return id, password, userType, nil
@@ -137,8 +137,8 @@ func Create(c *fiber.Ctx, db *sql.DB) error {
 	hashedPassword, err := utils.HashPassword(body.Password)
 
 	if err != nil {
-		log.Println(fmt.Sprintf("Error hashing password: %s", err.Error()))
-		response.Message = "Internal Server Error"
+		log.Printf("Error hashing password: %s", err.Error())
+		response.Message = "internal server error"
 		return c.Status(500).JSON(response)
 	}
 
@@ -181,16 +181,21 @@ func Login(c *fiber.Ctx, db *sql.DB) error {
 
 	id, password, userType, err := findUserQuery(body.Email, db)
 
+	if err != nil {
+		response.Message = "internal server error"
+		return c.Status(500).JSON(response)
+	}
+
 	if !utils.CheckPasswordHash(body.Password, password) {
-		response.Message = "Wrong password"
+		response.Message = "wrong password"
 		return c.Status(400).JSON(response)
 	}
 
 	response.Token, err = utils.CreateJWT(id, userType)
 
 	if err != nil {
-		log.Println(fmt.Sprintf("Error creating JWT: %s", err.Error()))
-		response.Message = "Internal Server Error"
+		log.Printf("Error creating JWT: %s", err.Error())
+		response.Message = "internal server error"
 		return c.Status(500).JSON(response)
 	}
 

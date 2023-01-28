@@ -14,10 +14,10 @@ func TestValidatePasswordSymbols(t *testing.T) {
 	fmt.Println("invalid: ", invalid)
 
 	if !valid {
-		t.Error(fmt.Sprintf("Testing using '%s' => Password should contain symbols.", passwordValid))
+		t.Errorf("Testing using '%s' => Password should contain symbols.", passwordValid)
 	}
 	if invalid {
-		t.Error(fmt.Sprintf("Testing using '%s' => Password should not contain symbols", passwordInvalid))
+		t.Errorf("Testing using '%s' => Password should not contain symbols", passwordInvalid)
 	}
 }
 
@@ -26,10 +26,10 @@ func TestValidatePasswordNumbers(t *testing.T) {
 	validCh, invalidCh := validatePasswordNumbers(passwordValid), validatePasswordNumbers(passwordInvalid)
 
 	if !<-validCh {
-		t.Error(fmt.Sprintf("Testing using '%s' => Password should contain numbers.", passwordValid))
+		t.Errorf("Testing using '%s' => Password should contain numbers.", passwordValid)
 	}
 	if <-invalidCh {
-		t.Error(fmt.Sprintf("Testing using '%s' => Password should not contain numbers", passwordInvalid))
+		t.Errorf("Testing using '%s' => Password should not contain numbers", passwordInvalid)
 	}
 }
 
@@ -38,10 +38,10 @@ func TestValidatePasswordUppercase(t *testing.T) {
 	validCh, invalidCh := validatePasswordUppercase(passwordValid), validatePasswordUppercase(passwordInvalid)
 
 	if !<-validCh {
-		t.Error(fmt.Sprintf("Testing using '%s' => Password should contain uppercase letters.", passwordValid))
+		t.Errorf("Testing using '%s' => Password should contain uppercase letters.", passwordValid)
 	}
 	if <-invalidCh {
-		t.Error(fmt.Sprintf("Testing using '%s' => Password should not contain uppercase letters.", passwordInvalid))
+		t.Errorf("Testing using '%s' => Password should not contain uppercase letters.", passwordInvalid)
 	}
 }
 
@@ -50,10 +50,10 @@ func TestValidatePasswordMinLength(t *testing.T) {
 	validCh, invalidCh := validatePasswordMinLength(passwordValid), validatePasswordMinLength(passwordInvalid)
 
 	if !<-validCh {
-		t.Error(fmt.Sprintf("Testing using '%s' => Password should be at least 8 characters long.", passwordValid))
+		t.Errorf("Testing using '%s' => Password should be at least 8 characters long.", passwordValid)
 	}
 	if <-invalidCh {
-		t.Error(fmt.Sprintf("Testing using '%s' => Password should not be at least 8 characters long.", passwordInvalid))
+		t.Errorf("Testing using '%s' => Password should not be at least 8 characters long.", passwordInvalid)
 	}
 }
 
@@ -62,10 +62,10 @@ func TestValidatePasswordMaxLength(t *testing.T) {
 	validCh, invalidCh := validatePasswordMaxLength(passwordValid), validatePasswordMaxLength(passwordInvalid)
 
 	if !<-validCh {
-		t.Error(fmt.Sprintf("Testing using '%s' => Password should be at most 24 characters long.", passwordValid))
+		t.Errorf("Testing using '%s' => Password should be at most 24 characters long.", passwordValid)
 	}
 	if <-invalidCh {
-		t.Error(fmt.Sprintf("Testing using '%s' => Password should not be at most 24 characters long.", passwordInvalid))
+		t.Errorf("Testing using '%s' => Password should not be at most 24 characters long.", passwordInvalid)
 	}
 }
 
@@ -74,10 +74,10 @@ func TestValidatePasswordEmpty(t *testing.T){
 	validCh, invalidCh := validatePasswordEmpty(passwordValid), validatePasswordEmpty(passwordInvalid)
 
 	if !<-validCh {
-		t.Error(fmt.Sprintf("Testing using '%s' => Password should not be empty.", passwordValid))
+		t.Errorf("Testing using '%s' => Password should not be empty.", passwordValid)
 	}
 	if <-invalidCh {
-		t.Error(fmt.Sprintf("Testing using '%s' => Password should be empty.", passwordInvalid))
+		t.Errorf("Testing using '%s' => Password should be empty.", passwordInvalid)
 	}
 }
 
@@ -85,17 +85,17 @@ func TestValidatePassword(t *testing.T) {
 	passwordValid, passwordInvalid := "Password123@", "password"
 	message, valid := ValidatePassword(passwordValid)
 	if !valid {
-		t.Error(fmt.Sprintf("Testing using '%s' => Password should be valid.", passwordValid))
+		t.Errorf("Testing using '%s' => Password should be valid.", passwordValid)
 	}
 	if message != "" {
-		t.Error(fmt.Sprintf("Testing using '%s' => Message should be empty.", passwordValid))
+		t.Errorf("Testing using '%s' => Message should be empty.", passwordValid)
 	}
 	message, valid = ValidatePassword(passwordInvalid)
 	if valid {
-		t.Error(fmt.Sprintf("Testing using '%s' => Password should not be valid.", passwordInvalid))
+		t.Errorf("Testing using '%s' => Password should not be valid.", passwordInvalid)
 	}
 	if message == "" {
-		t.Error(fmt.Sprintf("Testing using '%s' => Message should not be empty.", passwordInvalid))
+		t.Errorf("Testing using '%s' => Message should not be empty.", passwordInvalid)
 	}
 
 }
