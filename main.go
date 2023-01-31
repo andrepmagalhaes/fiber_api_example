@@ -7,12 +7,18 @@ import (
 	"os"
 
 	"github.com/andrepmagalhaes/q2bank_test/handlers"
+	"github.com/andrepmagalhaes/q2bank_test/utils"
 
 	"github.com/gofiber/fiber/v2"
 	_ "github.com/lib/pq"
 )
 
 func main() {
+
+	err := utils.SetupDotEnv()
+	if err != nil {
+		log.Fatal(fmt.Printf("Error loading .env file: %s", err.Error()))
+	}
 
 	file, err := os.OpenFile("logs.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
@@ -21,7 +27,10 @@ func main() {
 	defer file.Close()
 	log.SetOutput(file)
 
-	dbConnStr := "postgresql://postgres:123456@localhost:5432/q2bank?sslmode=disable"
+	dbConnStr := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable", os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_PASSWORD"), os.Getenv("POSTGRES_HOST"), os.Getenv("POSTGRES_PORT"), os.Getenv("POSTGRES_DB"))
+
+	fmt.Println(dbConnStr)
+
 	db, err := sql.Open("postgres", dbConnStr)
 
 	if err != nil {
@@ -51,6 +60,6 @@ func main() {
 		return handlers.Transaction(c, db)
 	})
 
-	app.Listen(":3000")
+	app.Listen(":" + os.Getenv("API_PORT"))
 
 }

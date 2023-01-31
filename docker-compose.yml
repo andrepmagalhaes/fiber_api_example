@@ -1,0 +1,24 @@
+version: "3.8"
+services:
+  db:
+    image: postgres
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    volumes:
+      - ./PostgreSQL:/var/lib/postgresql/data
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_HOST=q2bank_test-db-1
+    ports:
+      - ${API_PORT}:${API_PORT}

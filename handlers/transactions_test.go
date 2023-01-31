@@ -2,14 +2,23 @@ package handlers
 
 import (
 	"database/sql"
+	"fmt"
+	"log"
+	"os"
 	"testing"
 
+	"github.com/andrepmagalhaes/q2bank_test/utils"
 	_ "github.com/lib/pq"
 )
 
 func TestBalanceQuery(t *testing.T) {
+
+	err := utils.SetupDotEnv()
+	if err != nil {
+		log.Fatal(fmt.Printf("Error loading .env file: %s", err.Error()))
+	}
 	
-	dbConnStr := "postgresql://postgres:123456@localhost:5432/q2bank?sslmode=disable"
+	dbConnStr := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable", os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_PASSWORD"), os.Getenv("POSTGRES_HOST"), os.Getenv("POSTGRES_PORT"), os.Getenv("POSTGRES_DB"))
 	db, err := sql.Open("postgres", dbConnStr)
 
 	if err != nil {
@@ -30,7 +39,12 @@ func TestBalanceQuery(t *testing.T) {
 
 func TestFindUserByIdQuery(t *testing.T){
 
-	dbConnStr := "postgresql://postgres:123456@localhost:5432/q2bank?sslmode=disable"
+	err := utils.SetupDotEnv()
+	if err != nil {
+		log.Fatal(fmt.Printf("Error loading .env file: %s", err.Error()))
+	}
+
+	dbConnStr := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable", os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_PASSWORD"), os.Getenv("POSTGRES_HOST"), os.Getenv("POSTGRES_PORT"), os.Getenv("POSTGRES_DB"))
 	db, err := sql.Open("postgres", dbConnStr)
 	if err != nil {
 		t.Errorf("Error creating connection with db: %s", err.Error())
@@ -51,7 +65,12 @@ func TestFindUserByIdQuery(t *testing.T){
 
 func TestInsertTransactionQuery(t *testing.T){
 
-	dbConnStr := "postgresql://postgres:123456@localhost:5432/q2bank?sslmode=disable"
+	err := utils.SetupDotEnv()
+	if err != nil {
+		log.Fatal(fmt.Printf("Error loading .env file: %s", err.Error()))
+	}
+
+	dbConnStr := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable", os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_PASSWORD"), os.Getenv("POSTGRES_HOST"), os.Getenv("POSTGRES_PORT"), os.Getenv("POSTGRES_DB"))
 	db, err := sql.Open("postgres", dbConnStr)
 	if err != nil {
 		t.Errorf("Error creating connection with db: %s", err.Error())
@@ -77,7 +96,5 @@ func TestInsertTransactionQuery(t *testing.T){
 	if err != nil {
 		t.Errorf("Error deleting test transaction: %s", err.Error())
 	}
-
-
 
 }

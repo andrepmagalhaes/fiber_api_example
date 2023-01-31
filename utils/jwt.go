@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -17,6 +18,8 @@ type Claims struct {
 
 func CreateJWT(id int, userType string) (string, error) {
 
+	secret := os.Getenv("JWT_SECRET")
+
 	expirationTime := time.Now().Add(5 * time.Minute)
 	claims := &Claims{
 		Id: id,
@@ -27,7 +30,7 @@ func CreateJWT(id int, userType string) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString([]byte("secret"))
+	tokenString, err := token.SignedString([]byte(secret))
 	
 	if err != nil {
 		log.Printf("Error creating JWT: %s", err.Error())
@@ -38,13 +41,16 @@ func CreateJWT(id int, userType string) (string, error) {
 }
 
 func VerifyJWT(c *fiber.Ctx) (int, string, error) {
+
+	secret := os.Getenv("JWT_SECRET")
+
 	authorization := c.Get("Authorization")
 	if authorization == "" {
 		return -1, "", fmt.Errorf("Unauthorized")
 	}
 	claims := &Claims{}
 	tkn, err := jwt.ParseWithClaims(authorization, claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte("secret"), nil
+		return []byte(secret), nil
 	})
 	if err != nil {
 		if err == jwt.ErrSignatureInvalid {
