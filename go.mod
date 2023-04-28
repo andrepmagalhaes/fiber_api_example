@@ -1,4 +1,4 @@
-module github.com/andrepmagalhaes/q2bank_test
+module github.com/andrepmagalhaes/fiber_api_example
 
 go 1.19
 
